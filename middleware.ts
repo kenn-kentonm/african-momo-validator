@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from "next/server"
 import { checkAndIncrementUsage } from "@/lib/carriers"
 
 export async function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname.startsWith("/api/")) {
+  const path = req.nextUrl.pathname
+
+  // Allow health check without auth
+  if (path === "/api/health") return NextResponse.next()
+
+  if (path.startsWith("/api/")) {
     const key = req.headers.get("x-api-key") ?? ""
     const { allowed, reason } = await checkAndIncrementUsage(key)
     if (!allowed)
