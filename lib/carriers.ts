@@ -16,7 +16,7 @@ export async function checkAndIncrementUsage(
   apiKey: string
 ): Promise<{ allowed: boolean; reason?: string }> {
   const { data, error } = await supabase
-    .from("api_keys")
+    .from("momo_api_keys")
     .select("*")
     .eq("key", apiKey)
     .single()
@@ -26,7 +26,7 @@ export async function checkAndIncrementUsage(
   const today = new Date().toISOString().split("T")[0]
   if (data.last_reset !== today) {
     await supabase
-      .from("api_keys")
+      .from("momo_api_keys")
       .update({ calls_today: 0, last_reset: today })
       .eq("key", apiKey)
     data.calls_today = 0
